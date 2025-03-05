@@ -1,0 +1,67 @@
+You are creating a Google Gemini PDF to Structured Output that is extremely dynamic using the latest documentation that has been provided to you. It's model is set in the .env with GEMINI_MODEL= and defaults to 'gemini-2.0-flash' if no model is given.
+
+1. **Use of Gemini's Multimodal Capabilities**:
+   - They're treating the PDF as images ("Given an image of a document")
+   - They're providing both the full document image and cropped sections ("here are the different crops of this image")
+   - This leverages Gemini's vision capabilities to "see" the PDF content
+
+2. **Direct JSON Output**:
+   - Rather than using function calling, they're using the direct JSON output approach
+   - The strict constraints ensure the model produces properly formatted JSON
+   - The constraints address common formatting issues like comment generation and control characters
+
+3. **Dynamic Extraction Without Pre-defined Schema**:
+   - There's no schema defined in the prompt - instead, the model is expected to infer the appropriate structure
+   - This makes it highly flexible for different document types
+   - The "Extract the structured data" instruction is intentionally vague to allow the model to determine what's relevant
+
+4. **Zero-Shot Approach**:
+   - They don't provide examples of expected output formats
+   - They rely on the model's understanding of "structured data extraction" 
+   - This makes it usable for diverse document types without customization
+
+This implementation is elegantly simple - they're essentially letting Gemini:
+1. Visually analyze the document
+2. Identify data worth extracting
+3. Determine an appropriate structure
+4. Output valid JSON
+
+The benefit of this approach is that it requires no prior knowledge of the document type or structure - it works equally well for invoices, contracts, tables, forms, or any other document with structured information. The model itself determines what's worth extracting and how to structure it.
+
+
+pdf-to-structured-data/
+├── app/
+│   ├── __init__.py
+│   ├── main.py                  # FastAPI application entry point
+│   ├── config.py                # Configuration settings (API keys, etc.)
+│   ├── api/
+│   │   ├── __init__.py
+│   │   ├── routes/
+│   │   │   ├── __init__.py
+│   │   │   └── pdf_routes.py    # API endpoints for PDF processing
+│   ├── core/
+│   │   ├── __init__.py
+│   │   ├── pdf_processor.py     # PDF handling and preparation logic
+│   │   ├── schema_generator.py  # Dynamic schema generation
+│   │   └── data_extractor.py    # Structured data extraction
+│   ├── models/
+│   │   ├── __init__.py
+│   │   ├── request_models.py    # Pydantic models for request validation
+│   │   └── response_models.py   # Pydantic models for response structure
+│   ├── services/
+│   │   ├── __init__.py
+│   │   └── gemini_service.py    # Gemini API integration
+│   └── utils/
+│       ├── __init__.py
+│       ├── schema_utils.py      # Schema manipulation helpers
+│       └── file_utils.py        # File handling utilities
+├── tests/
+│   ├── __init__.py
+│   ├── test_pdf_processor.py
+│   ├── test_schema_generator.py
+│   ├── test_data_extractor.py
+│   └── test_api.py
+├── sample_pdfs/                 # Sample PDFs for testing
+├── .env                         # Environment variables (gitignored)
+├── requirements.txt
+└── README.md
