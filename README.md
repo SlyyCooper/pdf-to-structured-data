@@ -55,7 +55,7 @@ pdf-to-structured-data/
 
 1. Clone the repository:
 ```bash
-git clone <repository-url>
+git clone https://github.com/SlyyCooper/pdf-to-structured-data.git
 cd pdf-to-structured-data
 ```
 
